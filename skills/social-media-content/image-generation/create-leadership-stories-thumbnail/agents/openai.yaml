@@ -1,0 +1,14 @@
+interface:
+  display_name: Leadership Stories Thumbnail
+  short_description: Create consistent Leadership Stories thumbnails
+  default_prompt: Use $create-leadership-stories-thumbnail to create a thumbnail from
+    my attached frame and video title.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

@@ -1,0 +1,17 @@
+interface:
+  display_name: daily newsletter
+  short_description: Generate concise, actionable essays for Substack newsletters
+    or Medium blog posts. Written for technically competent professionals moving from
+    individual competence toward leadership judgment, the essays analyze behavior,
+    incentives, authority, and constraints rather than mindset or motivation. Targeting
+    3-minute reads by default, extending to 5 minutes max only when the topic demands
+    it to fully scope the problem and cover actionable takes.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

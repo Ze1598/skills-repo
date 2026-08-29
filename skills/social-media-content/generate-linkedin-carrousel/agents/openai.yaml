@@ -1,0 +1,14 @@
+interface:
+  display_name: Generate LinkedIn Carousel
+  short_description: Turn leadership essays into branded carousel PDFs
+  default_prompt: Use $generate-linkedin-carrousel to turn this leadership essay into
+    a finished LinkedIn carousel PDF.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  allow_implicit_invocation: true
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
