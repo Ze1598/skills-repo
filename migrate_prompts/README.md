@@ -9,7 +9,7 @@ Run every command in this guide from the repository root.
 Add one Markdown file per skill:
 
 ```text
-src_skills/
+migrate_prompts/
 ├── mapper.yaml
 ├── example-skill.md
 └── another-skill.md
@@ -48,7 +48,7 @@ The key identifies a Markdown file in this directory. The `.md` suffix may be om
 Resolve each entry as follows:
 
 ```text
-source:        src_skills/<source-name>.md
+source:        migrate_prompts/<source-name>.md
 skill name:    <source-name without .md>
 target parent: skills/<mapped-value>/
 target skill:  skills/<mapped-value>/<skill-name>/
