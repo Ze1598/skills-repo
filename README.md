@@ -1,13 +1,11 @@
 # Personal Agent Skills
 
-Reusable, vendor-neutral agent skills organized by capability domain. Each skill is a self-contained package rooted at `SKILL.md`; shared brand and leadership guidance lives under `shared/`.
+Reusable, vendor-neutral agent skills organized by capability domain. Each skill is a self-contained package rooted at `SKILL.md`; shared assets and knowledge across skills lives in `shared/`.
 
 ## Layout
 
-- `skills/content/` — newsletter and social-content generation
-- `skills/video/` — visual essays and thumbnail concepts
-- `skills/project-bootstrap/` — select relevant skills for a new project
-- `shared/` — reusable references and brand assets
+- `skills/*` — skills available in this repository, organized by domain (and sub-domain)
+- `shared/` — reusable assets and knowledge
 - `templates/skill/` — starting structure for new skills
 
 ## Using a skill

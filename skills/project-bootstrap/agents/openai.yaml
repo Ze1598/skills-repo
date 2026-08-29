@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Bootstrap"
-  short_description: "Select the relevant skills for a new project"
-  default_prompt: "Use $project-bootstrap to inspect this project and select the minimum relevant skills."
