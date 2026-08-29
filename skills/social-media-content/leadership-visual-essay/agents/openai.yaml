@@ -1,0 +1,4 @@
+interface:
+  display_name: "Leadership Visual Essay"
+  short_description: "Turn leadership essays into diagram-led videos."
+  default_prompt: "New video from <substack URL> — use the $leadership-visual-essay format, call it <Name>.mp4."
