@@ -8,6 +8,7 @@ Reusable, vendor-neutral agent skills organized by capability domain. Each skill
 - `shared/` — reusable assets and knowledge
 - `templates/skill/` — starting structure for new skills
 - `migrate_prompts` — a landing folder to add standalone markdown files of standalone prompts, ready to hand to off to an agent to migrate into skill definitions
+- `migrate_skills/` — a staging folder for lifting and shifting complete skill packages into the repository taxonomy
 
 ## Using a skill
 
@@ -26,3 +27,11 @@ Note the target location is a relative path to the /skills folder.
 At that point, you can hand off the migration to an agent to migrate all existing markdown files in that folder into skills in this repository.
 
 For additional clarifications, consult [Migration README](migrate_prompts/README.md).
+
+## Migrating skills
+
+Place complete skill folders in `migrate_skills/` and map each folder name to its target parent path in [the complete-skill mapper](migrate_skills/mapper.yaml). The mapped value is relative to `skills/` and does not include the skill folder name.
+
+Run `just migrate-skills` to migrate every mapped package, or run `just migrate-skill <folder-name> <target-parent>` for one package. This workflow preserves the complete directory rather than creating a new template: `SKILL.md`, `agents/openai.yaml`, assets, references, scripts, binary files, and executable files move together. It validates the folder name against the skill frontmatter, refuses to overwrite existing targets, compares the copied package with its source, and removes the staged source only after verification succeeds.
+
+For the mapper format, safety rules, and examples, consult the [complete skill migration guide](migrate_skills/README.md).
