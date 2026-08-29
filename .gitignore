@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+._*
+
+# Editors and local workspace settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Node.js dependencies and caches
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+
+# Logs and process artifacts
+*.log
+*.pid
+*.pid.lock
+*.tmp
+*.temp
+*.bak
+
+# Generated output
+dist/
+build/
+coverage/
+out/
+
+# Local environment files
+.env
+.env.*
+!.env.example
