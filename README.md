@@ -14,4 +14,4 @@ Read the selected skill's `SKILL.md`, then load only the references it names for
 
 ## Adding a skill
 
-Copy `templates/skill/`, rename the directory with lowercase hyphenated words, and complete `SKILL.md` and `agents/openai.yaml`. Keep procedural instructions in `SKILL.md`, UI metadata in `agents/openai.yaml`, detailed knowledge in `references/`, deterministic tools in `scripts/`, and output resources in `assets/`.
+Run `just add-skill <path>` to copy `templates/skill/` under `skills/<path>`. For example, `just add-skill newsletter/medium-custom` creates `skills/newsletter/medium-custom/` and initializes its skill name. Complete `SKILL.md` and `agents/openai.yaml`. Keep procedural instructions in `SKILL.md`, UI metadata in `agents/openai.yaml`, detailed knowledge in `references/`, deterministic tools in `scripts/`, and output resources in `assets/`.
