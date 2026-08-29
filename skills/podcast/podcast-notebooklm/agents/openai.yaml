@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast NotebookLM"
+  short_description: "Create focused operational podcast discussions"
+  default_prompt: "Use $podcast-notebooklm to prepare a focused podcast discussion from these sources."

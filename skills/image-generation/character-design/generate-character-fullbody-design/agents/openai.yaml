@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Character Full-Body Design"
+  short_description: "Extend character references into full-body designs"
+  default_prompt: "Use $generate-character-fullbody-design to extend this character reference into a complete full-body design."

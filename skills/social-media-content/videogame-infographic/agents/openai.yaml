@@ -1,0 +1,4 @@
+interface:
+  display_name: "Videogame Infographic"
+  short_description: "Turn essays into game-UI infographic prompts"
+  default_prompt: "Use $videogame-infographic to turn this essay into a game-UI-styled infographic prompt."

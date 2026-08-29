@@ -1,0 +1,4 @@
+interface:
+  display_name: "Satirical Essay Cover"
+  short_description: "Create graphite editorial-cartoon essay covers"
+  default_prompt: "Use $essay-cover-satirical to create a satirical editorial-cartoon cover for this essay."

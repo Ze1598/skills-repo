@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast YouTube Thumbnail"
+  short_description: "Design branded podcast YouTube thumbnails"
+  default_prompt: "Use $podcast-youtube-thumbnail to design a thumbnail for this podcast episode."
