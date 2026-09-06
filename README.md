@@ -1,10 +1,12 @@
 # Personal Agent Skills
 
-Reusable, vendor-neutral agent skills organized by capability domain. Each skill is a self-contained package rooted at `SKILL.md`; shared assets and knowledge across skills lives in `shared/`.
+Reusable, vendor-neutral agent know-how: skills organized by capability domain, plus the agent role definitions and the standing working conventions this repo's owner runs on. Each skill is a self-contained package rooted at `SKILL.md`; shared assets and knowledge across skills lives in `shared/`.
 
 ## Layout
 
 - `skills/*` — skills available in this repository, organized by domain (and sub-domain)
+- `agents/*` — reusable agent role definitions (architect, planning, developer, qa, integration, read-and-summarize), one `AGENT.md` per role
+- `AGENTS.md` — the standing working conventions (TDD-first, `just` recipes, script-once-loop, docs-as-source-of-truth, knowledge handoff, communication style)
 - `shared/` — reusable assets and knowledge
 - `templates/skill/` — starting structure for new skills
 - `migrate_prompts` — a landing folder to add standalone markdown files of standalone prompts, ready to hand to off to an agent to migrate into skill definitions
@@ -13,6 +15,10 @@ Reusable, vendor-neutral agent skills organized by capability domain. Each skill
 ## Using a skill
 
 Read the selected skill's `SKILL.md`, then load only the references it names for the current task. Treat the paths in this repository as portable; do not assume a particular agent runtime.
+
+## Using an agent
+
+Each role definition in `agents/<name>/AGENT.md` is a portable agent contract: YAML frontmatter (`name`, `description`, `model`, `tools`) plus the persona body in the house style ('Your job' steps, 'Absolute rules', no soft language, 'report to X'). The five-role QA-first pipeline they implement is documented in `skills/dev-agents/`. Per-repo rules are never baked into these — they load from the consuming project's own context file.
 
 ## Adding a skill
 
