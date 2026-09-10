@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brain Dream"
+  short_description: "Deterministic consolidation pass for the Obsidian Brain."
+  default_prompt: "Use brain-dream to consolidate signals into confirmed preferences."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brain Digest"
+  short_description: "Periodic review surface for the Obsidian Brain."
+  default_prompt: "Use brain-digest to run or read the nightly Brain consolidation digest."

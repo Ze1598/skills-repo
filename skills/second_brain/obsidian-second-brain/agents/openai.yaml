@@ -1,0 +1,4 @@
+interface:
+  display_name: "Obsidian Second Brain"
+  short_description: "Operating manual for the global Obsidian Brain memory layer."
+  default_prompt: "Use obsidian-second-brain to read or write the global Obsidian Brain."

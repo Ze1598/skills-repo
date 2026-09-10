@@ -2,9 +2,40 @@
 
 Reusable, vendor-neutral agent know-how: skills organized by capability domain, plus the agent role definitions and the standing working conventions this repo's owner runs on. Each skill is a self-contained package rooted at `SKILL.md`; shared assets and knowledge across skills lives in `shared/`.
 
+## The Second Brain
+
+This repository also carries the **global memory layer** for the owner's AI assistance: a cross-session,
+cross-project second brain stored as plain, human-auditable markdown in an Obsidian vault. It exists to
+solve one core problem — a fact, correction, or preference learned in one session or project is lost the
+moment that session ends or the context is scoped to a different project. The Second Brain is the durable
+store any session can recall from.
+
+**Its purpose.** Every interaction produces signals: corrections, recurring preferences, pipeline lessons,
+environment facts. The Second Brain captures these as raw, cited signals; a deterministic nightly
+consolidation pass ("dream") promotes repeated same-sign patterns into confirmed, confidence-scored
+preferences and retires stale ones — so memory self-maintains instead of rotting. The owner can audit
+everything by hand, because it is ordinary markdown in the Obsidian vault they already open.
+
+**Integration with Hermes.** The design is Hermes-specific and leans on Hermes-native features rather than a
+third-party plugin:
+
+- **`OBSIDIAN_VAULT_PATH`** (in `~/.hermes/.env`) + Hermes's built-in `obsidian` skill give the agent a
+  plugin-free read/write path into the vault.
+- The vault's hot tier is Hermes's built-in `MEMORY.md`/`USER.md`, always injected, holding only routing
+  pointers to the vault — so context stays lean while the full knowledge base stays reachable.
+- The deterministic **dream pass** and the nightly **digest cron** run as plain Hermes cron jobs
+  (`--no-agent --script`), delivering a review summary to the owner and staying silent when nothing changed.
+- Because every session reads the vault through the same `obsidian` skill, the Brain is reachable from any
+  project — closing the cross-session recall gap directly.
+
+The canonical design lives in [SECOND_BRAIN.md](SECOND_BRAIN.md), and the four companion skills
+(`second_brain/obsidian-second-brain`, `second_brain/brain-signals`, `second_brain/brain-dream`,
+`second_brain/brain-digest`) carry the hands-on operating procedure.
+
 ## Layout
 
 - `skills/*` — skills available in this repository, organized by domain (and sub-domain)
+- `SECOND_BRAIN.md` — the design and operating spec for the global Obsidian second-brain memory layer (see the chapter below)
 - `agents/*` — reusable agent role definitions (architect, planning, developer, qa, integration, read-and-summarize), one `AGENT.md` per role
 - `AGENTS.md` — the standing working conventions (TDD-first, `just` recipes, script-once-loop, docs-as-source-of-truth, knowledge handoff, communication style)
 - `shared/` — reusable assets and knowledge

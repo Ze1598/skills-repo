@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brain Signals"
+  short_description: "Capture signals and apply/violate evidence for the Obsidian Brain."
+  default_prompt: "Use brain-signals to log a signal or evidence into the Obsidian Brain."

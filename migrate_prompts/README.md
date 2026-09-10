@@ -127,14 +127,6 @@ find skills -type d \( -name assets -o -name references -o -name scripts \) -emp
 
 This command deletes directories only when they are empty. It does not remove populated resource directories or their contents.
 
-## Validate the migration
-
-For each created skill, run:
-
-```bash
-python3 /Users/josecosta/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/<mapped-value>/<skill-name>
-```
-
 Also verify:
 
 1. Every mapper entry produced exactly one target skill.
