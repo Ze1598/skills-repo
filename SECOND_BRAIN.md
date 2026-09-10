@@ -184,22 +184,36 @@ load the whole vault.
 
 ---
 
-## 6. Cron jobs (the automated periodic-review points)
+## 6. Consolidation schedule (the automated periodic-review points)
 
-**Job: `brain-digest-nightly`**
+The consolidation loop is a **macOS launchd job**, independent of the Hermes gateway (so it runs even
+when the gateway is off and survives reboots).
+
+**Job: `com.hermes.braindigest`** — plist at `~/Library/LaunchAgents/com.hermes.braindigest.plist`
+
+- **Schedule:** daily at **22:00** via `StartCalendarInterval` (`Hour=22`, `Minute=0`).
+- **Script:** `~/.hermes/scripts/brain-digest.sh` → runs the dream pass then renders the digest.
+- **Env:** `OBSIDIAN_VAULT_PATH` baked into the plist; the script pins the Framework Python 3.13 (the
+  interpreter that has `pyyaml` — system `/usr/bin/python3` does not).
+- **Logs:** `~/.hermes/logs/brain-digest.{out,err}.log`.
+- **Notification:** when there is a digest to report, the script fires a **macOS notification**
+  (`osascript` banner, title "Brain digest — <date>", subject = first change line). Silent (no
+  notification, empty output) when nothing changed.
+- **Delta behavior:** if the machine is off at 22:00, launchd misses that run; the next successful run
+  re-scans signals within `same_sign_window_days` (default 30 days), so the full missed delta is
+  consolidated in that one pass — nothing is lost, recovery is not locked to "yesterday."
+
+Load/manage:
 
 ```bash
-hermes cron create '0 3 * * *' --name brain-digest-nightly \
-  --deliver local --no-agent --script brain-digest.sh
+launchctl load ~/Library/LaunchAgents/com.hermes.braindigest.plist
+launchctl list | grep braindigest        # registered: `- 0 com.hermes.braindigest`
+launchctl kickstart -k gui/$(id -u)/com.hermes.braindigest   # run once / verify
 ```
 
-- **Schedule:** nightly 03:00.
-- **Script:** `~/.hermes/scripts/brain-digest.sh` → runs the dream pass then renders the digest.
-- **Delivery:** `local` (into chat). `--no-agent --script` = no LLM, stdout delivered verbatim.
-  `--silent-if-empty` exits `2` with empty stdout when nothing changed (Hermes treats as no-op).
-- Digest reports: new unconfirmed prefs, confirmations, retirements, confidence shifts, contradictions.
-
-**Prerequisite:** the gateway must be running for cron to fire.
+A legacy Hermes-cron form (`brain-digest-nightly`, `--no-agent --script --deliver local`) can also be
+registered for chat delivery on days the gateway is up, but the launchd job is the authoritative runner
+(delivery-agnostic, gateway-independent).
 
 ---
 
@@ -223,9 +237,10 @@ Though the vault is plain markdown (portable), the *automation* leans on Hermes-
 
 1. **`OBSIDIAN_VAULT_PATH` env var + the built-in `obsidian` skill.** Hermes resolves the vault path
    from this env var and uses file tools + `[[wikilinks]]` for all vault work — the plugin-free path.
-2. **Hermes cron (`--no-agent --script`).** The nightly dream + digest are plain Hermes cron jobs that
-   shell out to the deterministic script and deliver stdout verbatim. Empty stdout = silent. This is
-   the automated periodic-review surface.
+2. **The consolidation loop runs as a macOS launchd job.** The nightly dream + digest fire via
+   `com.hermes.braindigest` (launchd `StartCalendarInterval`, independent of the gateway), shelling out
+   to the deterministic script and delivering via a macOS notification (or stdout/logs). A Hermes-cron
+   `--no-agent --script` mirror can add chat delivery when the gateway is up, but is not required.
 3. **Built-in memory as T1 hot.** Hermes auto-injects `MEMORY.md`/`USER.md`; the Brain treats them as
    the hot index layer pointing at the vault.
 4. **File tools as the only write surface.** File tools don't expand shell vars, so the skill resolves
@@ -252,10 +267,13 @@ owner-auditable markdown store with no hidden state.
 
 ## 10. Status and open items
 
-- Vault scaffolded at `~/Documents/obsidian/`; dream pass + digest verified end-to-end; nightly cron
-  registered (`brain-digest-nightly`), fires when the gateway is up.
-- **Open:** the live `brain_dream.py` should live with the `brain-dream` skill (not in any project),
-  so it survives independent of a given repo.
+- Vault scaffolded at `~/Documents/obsidian/`; dream pass + digest verified end-to-end; the
+  `com.hermes.braindigest` launchd job registered (daily 22:00, gateway-independent, macOS
+  notification) and verified by a `launchctl kickstart` run.
+- `brain_dream.py` lives with the `brain-dream` skill (`skills/second_brain/brain-dream/scripts/`),
+  not in any project repo — confirmed single source, gateway-independent.
+- Live capture is the active channel during sessions (cited signals appended to `Brain/log/`); the
+  launchd job consolidates them on schedule.
 
 ---
 

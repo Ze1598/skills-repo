@@ -1,46 +1,48 @@
 ---
 name: brain-digest
-description: Periodic review surface for the Obsidian Brain — the nightly dream+digest cron, how output reaches the owner, and how to read it.
+description: Periodic review surface for the Obsidian Brain — the launchd daily consolidation job, macOS notification, delta catch-up, and how to read the digest.
 ---
 
 # Brain Digest — Periodic Review
 
-Use when the nightly Brain consolidation runs, when wiring/reviewing the digest cron, or when reading a
-digest to decide what the owner should act on. This is the automated "periodic review point" of the
-second brain.
+Use when the daily Brain consolidation runs, when wiring/reviewing the consolidation job, or when
+reading a digest to decide what the owner should act on. This is the automated "periodic review point"
+of the second brain.
 
 Siblings: `obsidian-second-brain` (operating manual), `brain-signals` (capture),
 `brain-dream` (consolidation).
 
-## The cron job
+## The launchd job
 
-Registered as `brain-digest-nightly`:
+The consolidation loop runs as **`com.hermes.braindigest`**, a macOS launchd job independent of the
+Hermes gateway (runs even with the gateway off; survives reboots).
+
+- **Plist:** `~/Library/LaunchAgents/com.hermes.braindigest.plist`
+- **Schedule:** daily at **22:00** (`StartCalendarInterval`: Hour=22, Minute=0).
+- **Script:** `~/.hermes/scripts/brain-digest.sh` — runs the dream pass, then renders the digest.
+- **Env:** `OBSIDIAN_VAULT_PATH` baked into the plist. The script pins the Framework Python 3.13
+  (`/Library/Frameworks/Python.framework/Versions/3.13/bin/python3`) because system `/usr/bin/python3`
+  lacks `pyyaml`.
+- **Logs:** `~/.hermes/logs/brain-digest.{out,err}.log`.
+- **Notification:** when there is a digest to report, fires a **macOS notification** (`osascript`
+  banner, title "Brain digest — <date>", subject = first change line). Silent when nothing changed.
+
+## Manage it
 
 ```bash
-hermes cron create '0 3 * * *' --name brain-digest-nightly \
-  --deliver local --no-agent --script brain-digest.sh
+launchctl load ~/Library/LaunchAgents/com.hermes.braindigest.plist     # install/register
+launchctl list | grep braindigest                                      # registered: `- 0 com.hermes.braindigest`
+launchctl kickstart -k gui/$(id -u)/com.hermes.braindigest             # run once / verify
+cat ~/.hermes/logs/brain-digest.{err,out}.log                          # inspect last run
 ```
 
-- **Schedule:** nightly 03:00.
-- **Script:** `~/.hermes/scripts/brain-digest.sh` — runs the dream pass (consolidate), then renders
-  the digest for the trailing window.
-- **Delivery:** `local` (into the chat). `--no-agent --script` = no LLM; stdout delivered verbatim.
-- **Silent when quiet:** the script is invoked with `--silent-if-empty`, which exits `2` with empty
-  stdout when nothing changed → Hermes posts nothing.
+## Delta behavior (missed runs are not lost)
 
-Wrapper (`~/.hermes/scripts/brain-digest.sh`) is a thin shell that calls the dream skill's script:
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-VAULT="${OBSIDIAN_VAULT_PATH:-$HOME/Documents/obsidian}"
-DREAM_PY="$HOME/Documents/projects/kurothos-deckbuilder/tools/brain_dream.py"
-"$DREAM_PY" "$VAULT" >/dev/null 2>&1 || true
-exec "$DREAM_PY" "$VAULT" --digest --silent-if-empty
-```
-
-(When the dream script lives with the `brain-dream` skill, point `DREAM_PY` at that copy so the digest
-is not tied to any single project.)
+launchd does not queue a run missed while the machine is off — it waits for the next scheduled time.
+**Nothing is lost**, because the dream pass re-scans signals within `same_sign_window_days` (default 30
+days) on every run. A machine off for N days consolidates the whole N-day delta on its next successful
+run; recovery is not locked to "yesterday." Live capture during sessions is independent of this job
+entirely.
 
 ## The digest output
 
@@ -57,20 +59,22 @@ is not tied to any single project.)
 
 ## Reading it as the owner/reviewer
 
-- **New unconfirmed** — rules in a 14-day trial; glance at the cited signals, decide whether to keep
-  or reject (`user_rejected`).
-- **Confirmed** — a rule now shapes behavior; worth a quick sanity check.
+- **New unconfirmed** — rules in a 14-day trial; glance at cited signals, decide whether to keep or
+  reject (`user_rejected`).
+- **Confirmed** — a rule now shapes behavior; worth a sanity check.
 - **Retired** — memory freed; check for any that shouldn't have been.
 - **Confidence shifts** — rising/falling confidence on a rule you care about.
 
 The digest is opt-in automation: it reports changes; the owner decides what to act on.
 
-## Prerequisite
+## Optional Hermes-cron chat delivery
 
-The gateway must be running for cron to fire. When it's down, run the digest ad-hoc with
-`python3 <dream-skill>/scripts/brain_dream.py <vault> --digest`.
+A `brain-digest-nightly` Hermes cron (`--no-agent --script --deliver local`) can mirror the launchd job
+for chat delivery on days the gateway is up. It is NOT the authoritative runner — the launchd job is
+(delivery-agnostic, gateway-independent).
 
 ## Verification
 
-`hermes cron list` shows the job; `hermes cron run brain-digest-nightly` does a one-shot dry run and
-prints the digest to confirm it's wired before you trust it to fire.
+`launchctl list | grep braindigest` shows it registered. `launchctl kickstart -k
+gui/$(id -u)/com.hermes.braindigest` runs it once; a non-empty digest in `~/.hermes/logs/brain-digest.out.log`
+with an empty error log confirms it works end-to-end.
