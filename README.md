@@ -2,6 +2,17 @@
 
 Reusable, vendor-neutral agent know-how: skills organized by capability domain, plus the agent role definitions and the standing working conventions this repo's owner runs on. Each skill is a self-contained package rooted at `SKILL.md`; shared assets and knowledge across skills lives in `shared/`.
 
+## Layout
+
+- `skills/*` — skills available in this repository, organized by domain (and sub-domain)
+- `SECOND_BRAIN.md` — the design and operating spec for the global Obsidian second-brain memory layer (see the chapter below)
+- `agents/*` — reusable agent role definitions (architect, planning, developer, qa, integration, judge, read-and-summarize), one `AGENT.md` per role
+- `AGENTS.md` — the standing working conventions (TDD-first, `just` recipes, script-once-loop, docs-as-source-of-truth, knowledge handoff, communication style)
+- `shared/` — reusable assets and knowledge
+- `templates/skill/` — starting structure for new skills
+- `migrate_prompts` — a landing folder to add standalone markdown files of standalone prompts, ready to hand to off to an agent to migrate into skill definitions
+- `migrate_skills/` — a staging folder for lifting and shifting complete skill packages into the repository taxonomy
+
 ## The Second Brain
 
 This repository also carries the **global memory layer** for the owner's AI assistance: a cross-session,
@@ -32,24 +43,19 @@ The canonical design lives in [SECOND_BRAIN.md](SECOND_BRAIN.md), and the four c
 (`second_brain/obsidian-second-brain`, `second_brain/brain-signals`, `second_brain/brain-dream`,
 `second_brain/brain-digest`) carry the hands-on operating procedure.
 
-## Layout
-
-- `skills/*` — skills available in this repository, organized by domain (and sub-domain)
-- `SECOND_BRAIN.md` — the design and operating spec for the global Obsidian second-brain memory layer (see the chapter below)
-- `agents/*` — reusable agent role definitions (architect, planning, developer, qa, integration, read-and-summarize), one `AGENT.md` per role
-- `AGENTS.md` — the standing working conventions (TDD-first, `just` recipes, script-once-loop, docs-as-source-of-truth, knowledge handoff, communication style)
-- `shared/` — reusable assets and knowledge
-- `templates/skill/` — starting structure for new skills
-- `migrate_prompts` — a landing folder to add standalone markdown files of standalone prompts, ready to hand to off to an agent to migrate into skill definitions
-- `migrate_skills/` — a staging folder for lifting and shifting complete skill packages into the repository taxonomy
-
 ## Using a skill
 
 Read the selected skill's `SKILL.md`, then load only the references it names for the current task. Treat the paths in this repository as portable; do not assume a particular agent runtime.
 
 ## Using an agent
 
-Each role definition in `agents/<name>/AGENT.md` is a portable agent contract: YAML frontmatter (`name`, `description`, `model`, `tools`) plus the persona body in the house style ('Your job' steps, 'Absolute rules', no soft language, 'report to X'). The five-role QA-first pipeline they implement is documented in `skills/dev-agents/`. Per-repo rules are never baked into these — they load from the consuming project's own context file.
+Run `just test-agent-contracts` to check role metadata, workflow stages, repair ownership, TDD ordering,
+and gate permissions. These static checks do not validate live Hermes dispatch or test quality.
+Every implementation follows QA → Developer → Integration, including single-module work. QA owns
+contract repairs; Developer owns implementation repairs; Judge resolves disputes. Repairs require
+fresh execution evidence before an isolated Architect gate. Canonical-workspace cards execute serially.
+
+Each role definition in `agents/<name>/AGENT.md` is a portable agent contract: YAML frontmatter (`name`, `description`, `model`, `tools`) plus the persona body in the house style ('Your job' steps, 'Absolute rules', no soft language, 'report to X'). The core QA-first pipeline, supporting Judge and Read-and-Summarize roles, and separate fresh Architect gate are documented in `skills/dev-agents/`. Per-repo rules are never baked into these — they load from the consuming project's own context file.
 
 ## Adding a skill
 
@@ -72,3 +78,20 @@ Place complete skill folders in `migrate_skills/` and map each folder name to it
 Run `just migrate-skills` to migrate every mapped package, or run `just migrate-skill <folder-name> <target-parent>` for one package. This workflow preserves the complete directory rather than creating a new template: `SKILL.md`, `agents/openai.yaml`, assets, references, scripts, binary files, and executable files move together. It validates the folder name against the skill frontmatter, refuses to overwrite existing targets, compares the copied package with its source, and removes the staged source only after verification succeeds.
 
 For the mapper format, safety rules, and examples, consult the [complete skill migration guide](migrate_skills/README.md).
+
+## Portable agent learning and runtime migration
+
+`agents/<role>/AGENT.md` is authoritative. The Architect and Judge copies under `skills/dev-agents/`
+are synchronized and checked for matching bodies and equivalent metadata. `agent-self-learning` defines bounded independent reviews,
+feedback on unsuccessful attempts, preservation of evidence, and evaluation of proposed role changes.
+The main-session Architect owns coordination wherever tooling cannot do it. Role model IDs are routing
+preferences to map when a runtime is selected; this repository does not require an active runtime.
+
+Repository edits do not deploy, stage or commit changes. Record adoption separately from deployment and
+measured improvement. Keep behavioral evaluation pending while migrating; static checks cannot establish
+agent effectiveness. Runtime copies are derived from repository versions, never the source of truth.
+The `onboard-hermes` skill is an optional legacy adapter, used only if Hermes is explicitly selected.
+
+Run `just test-agent-contracts` for deterministic contract and installation-validator regression tests (requires Python and PyYAML).
+For an exported `<role>/skills/**/SKILL.md` tree, `just validate-role-snapshot /absolute/export/root`
+checks expected roles and dependencies using PyYAML. It neither connects to nor changes a runtime.

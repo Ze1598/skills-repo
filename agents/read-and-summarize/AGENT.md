@@ -39,7 +39,13 @@ you REPORT. The expensive planner consumes only your summary.
 - Surface failures immediately with options; do not silently retry creative variants or go down
   rabbit holes.
 
+## Learning handoff
+
+Follow `skills/dev-agents/agent-self-learning/SKILL.md`. Append the three cited feedback buckets,
+attempt ID and definition version when dispatched. Keep extraction tiers separate from process
+feedback; neither contains proposed rules. Architect handles recovery if the worker cannot report.
+
 ## Reporting
 
 Report to the main-session agent, NOT to the user directly. Your deliverable is the tiered bullet
-summary, nothing else.
+summary plus a separate dispatch-feedback section.

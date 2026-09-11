@@ -1,129 +1,82 @@
 ---
 name: kanban-agent-pipelines
-description: Stand up multi-agent role pipelines on Hermes Kanban.
+description: Map the portable QA-first role pipeline and learning-review lifecycle to a selected task runtime, with explicit main-session coordination where automation is absent.
 ---
-# Multi-Agent Role Pipelines on Hermes Kanban
+# Portable Agent Pipelines
 
-Turn markdown role definitions (Claude-Code-style: `name`/`description`/`tools`/`model` frontmatter +
-persona body) into a global, reusable agent system where each role is a Hermes PROFILE + a role
-SKILL, coordinated on a per-project Kanban board. Read the sibling skills `architect` and
-`onboard-hermes` (user-owned, in this same category) for the concrete five-role QA-first
-contract this user runs; this skill carries the generic standup PROCEDURE and pitfall set.
+The skill name is retained for existing links; Kanban and Hermes are not prerequisites.
+Canonical role contracts live in `agents/<role>/AGENT.md`. Architect and Judge skill copies must match
+those definitions. Apply the consuming project's conventions. Model identifiers in definitions are
+routing preferences to map and verify when a runtime is chosen, not installation requirements now.
 
-## Mental model — one Claude agent = THREE Hermes objects
+Read `../agent-self-learning/SKILL.md` for feedback, failed-attempt recovery, review termination,
+retention, repository changes and evaluation. Read `../architect/SKILL.md` for coordinator/gate modes
+and `../judge/SKILL.md` for delivery/learning modes. No runtime deployment is part of tightening these docs.
 
-| Claude-Code concept | Hermes object | Global or per-repo |
-|---|---|---|
-| agent definition (.md) | role skill (`SKILL.md` under `~/.hermes/profiles/<role>/skills/...`) | global, repo-agnostic |
-| agent identity | profile (`hermes profile create`) | global |
-| spawn + coordination | Kanban board + dispatcher | per project (one board per repo) |
-| per-repo rules | project CLAUDE.md/AGENTS.md | per repo only |
+## Roles and order
 
-Never bake a repo's governance (git-state prohibition, `just`-recipe layer, repo-specific env fixes)
-into a GLOBAL role skill — it misfires in unrelated projects. Global roles say only "apply the
-project's declared command layer / conventions"; per-repo rules load from the project context file at
-project start.
+Architect (main session) owns user communication, infrastructure, runtime mapping and final acceptance.
+Planning creates self-contained tasks and documentation updates. QA authors the requirement-derived
+feature scenarios, executable acceptance tests and fixtures before new implementation changes.
+Developer writes independent unit tests first, confirms expected failure, implements and reruns.
+Integration reruns both suites for every implementation, including single-module work. Add cross-module
+scenarios only when modules interact. A fresh Architect gate reviews the diff and reruns tests.
+Judge arbitrates delivery disputes or reviews learning in an explicitly selected mode.
+Read-and-Summarize provides cited extraction when needed, not a mandatory implementation stage.
 
-## Role roster
+Initial dependencies: QA → Developer → Integration → fresh Architect gate → main-session decision.
+Developer repairs implementation defects; QA repairs contract defects. Judge resolves disputed ownership.
+After any repair, arrange new execution evidence before the gate. Do not blindly replay completed work
+or use a prior passing result after the workspace changes. Trivial direct work may bypass the full DAG.
 
-The standard pipeline includes Architect, Judge, Planning, QA, Developer, Integration, and
-Read-and-Summarize. Judge is a separate `judge` profile using `openai/gpt-5.6-luna-pro`; it handles
-independent failure/review rulings and does not replace the Architect's final gate.
+Canonical-workspace execution is serial under sole claims; no parallel writes or Integration merge
+responsibility. Claims, dependency release and failed-task states must be mapped to actual runtime
+capabilities. Workers report durable handoffs rather than requiring live peer chat. Only the main-session
+Architect provisions or tears down infrastructure; keep it available through repair and final verification.
 
-## When to Use
-- Standing up named agent roles for a new project (or porting Claude-Code subagents into Hermes).
-- Routing a substantial task through a QA-first Developer/QA/Integration pipeline.
-- Choosing between Kanban (durable, persistent-role, survives restarts) vs `delegate_task` (one-shot,
-  in-context, non-durable). Use Kanban when work crosses agent boundaries, needs restart survival,
-  may need human input, or must be re-discoverable after the fact; `delegate_task` for short
-  reasoning answers returned to the parent before continuing.
-- Don't use: single-episode admin/triage, or work that lives and dies in one session.
+## Explicit coordination and learning
 
-## Procedure
+Architect ensures one independent learning review per eligible attempt; Planning may pre-create it.
+Eligible roles/modes and the learning-review exemption are defined in the shared self-learning skill.
+Learning-review attempts and retries do not create another learning review. Judge delivery attempts do.
+Use stable task and attempt IDs to deduplicate scheduling. Completion never implies automatic review
+creation. Record pending transitions and owners; if automation is unavailable, Architect routes them.
 
-1. Create each role as a profile CLONED from the working default so it inherits provider OAuth + the
-   inference URL — do not create empty and re-wire auth:
-   ```
-   hermes profile create '<role>' --clone --description '<one-line routing desc>'
-   ```
-   Set the description: the kanban decomposer routes cards by it; it ships empty otherwise.
-2. Pin the per-profile model — `--clone` copies default's model, so a cloned worker is on the wrong
-   model until pinned:
-   ```
-   hermes -p '<role>' config set model '<provider-slug>/<model-slug>'
-   ```
-   NEVER invent routing ids. Query the live catalog and grep for the exact slug before pinning:
-   `curl -s https://inference-api.nousresearch.com/v1/models`. Naming is `provider/model-version`
-   (`openai/gpt-6-astra-flex`, `qwen/qwen3.8-flash`, `deepseek/deepseek-v4-flash-0731`).
-3. Write each role SKILL.md into THAT role's profile skills dir so a spawned worker auto-loads it:
-   `~/.hermes/profiles/<role>/skills/<category>/role/SKILL.md`. Keep `name`+`description` present;
-   extra frontmatter keys (`model:`, `tools:`) and long descriptions are tolerated by the loader.
-4. Orchestration recipe + the Architect/gate persona live in the DEFAULT (main-chat) profile's skills;
-   Architect is the main-session persona consumed at project start, not a spawned worker.
-5. Create a board per project with the canonical repo as default workdir:
-   `hermes kanban boards create <slug> --default-workdir <abs-canonical-repo>`.
-6. Create the task DAG with parent links so the dispatcher enforces ordering across restarts; verify
-   with `hermes kanban dispatch --dry-run` and `hermes -p <role> skills list` (role skill `enabled`).
+Failed, blocked and interrupted attempts also require review coverage. Architect assembles missing
+feedback from preserved run evidence and routes learning independently of success-only dependencies.
+Keep the source task's delivery state intact. A learning verdict cannot release a delivery gate.
+A learning review may proceed after a terminal attempt without delaying unrelated delivery work;
+its pending state remains visible. Repeated blockers are escalated, not hidden in the learning backlog.
 
-## Worker spawn reality (verify against the install; do not design around conversational spawning)
-- A worker is a subprocess `hermes -p <assignee> --cli chat -q "work kanban task <id>"`. The `-p`
-  sets a profile-scoped `HERMES_HOME`; the worker loads THAT profile's model/.env/memory/skills.
-- `kanban_*` tools auto-enable because the spawn sets `HERMES_KANBAN_TASK`; workers call the tools,
-  never shell out to `hermes kanban`.
-- Workers are isolated peers: no live agent-to-agent chat, no supervising model that "spawns"
-  siblings and shuttles messages. That is the Claude subagent model and a worker does not have it.
-  Handoff is durable rows (summary/metadata/comments) the next worker reads as `worker_context`.
-- Sequence is enforced by the parent-link engine, not by a model orchestrator; a worker that must
-  "speak first" is realized by making its card the parent of the dependent card.
+## Readiness and migration checklist
 
-## QA-first TDD topology (the anti-overfit pattern this user runs)
-- QA authors the acceptance contract (.feature + programmatic tests + mock datasets) BEFORE code
-  exists. Developer then implements from the REQUIREMENT, never from QA's tests. Integration
-  EXECUTES QA-authored tests once Developer unit tests pass. Failures return to the Developer card
-  via `request_changes(reason)`; approve via `kanban_complete`. QA-authored tests sit dormant
-  (un-runnable, not failing) until the code exists.
-- Cards: QA on `dir:<canonical-repo>`, Developer `--parent <qa-id> --body 'from REQUIREMENT only'`,
-  Integration `--parent <dev-id>` ONLY if modules genuinely interact. Single-module projects skip the
-  Integration card.
-- `dir:<path>` is preserved across completion; `scratch` is DELETED on completion (files vanish unless
-  declared via `kanban_complete(artifacts=)`). Never design concurrent multi-worker writes to one
-  shared tree to reconcile later — the system atomically claims one task at a time; serialize.
+Before claiming runtime readiness, Architect records evidence for:
 
-## Durable supervision and handoff
-The gateway's embedded dispatcher is the sole owner of promotion, claiming, reclaim, spawning, and
-failure-limit auto-blocking. A separate launchd-carried sentinel is observation-only: it reads each
-running card's log and exact worker process, alerts on dead workers/provider-fatal output/blocked cards,
-and may stop the exact provider-fatal worker. It must never dispatch, reclaim, complete, or mutate card
-state. Do not substitute chat-session polling for either service.
+1. Selected runtime, durable record/evidence store and which transitions require main-session action.
+   If none is selected, record `runtime pending`; repository validation is still available.
+2. Canonical role versions and copies actually loaded; explicit mode and model mapping for each role.
+   Install required `agent-self-learning` content for all roles and `knowledge-handoff-summary` for
+   Read-and-Summarize, using the target's supported loading mechanism.
+3. Task dependencies, serial workspace ownership, isolated gate and learning contexts, and repair flow.
+4. One review mapping per eligible attempt, including failed attempts; learning-review exemption;
+   Architect ownership of missing feedback, scheduling and evidence preservation.
+5. Verified task/run evidence for scheduling, failure recovery and durable handoff retrieval. A state
+   label alone is insufficient. Do not invent an API or claim that prose enforces these transitions.
 
-Before reporting a live pipeline, verify all four independent signals: launchd state for the sentinel,
-launchd state for the gateway, a worker PID matching a running card, and a gateway dispatcher log entry.
-A running card without a matching worker is stale, not progress. If the chat is interrupted, the
-external services remain the source of truth and must be read back after reconnection.
-
-The board is durable SQLite, not the mirror file. For board `kurothos-deckbuilder`, the canonical
-store is `~/.hermes/kanban/boards/kurothos-deckbuilder/kanban.db`; adjacent `board.json` contains
-board metadata. `~/.hermes/kanban/mirror-*.json` is only a projection.
+Migration preserves task bodies, dependency links, attempt IDs, definition versions, feedback, run
+artifacts, rulings and original/replacement ID mappings. Verify copied evidence remains readable before
+removing its source. If preservation is unsupported, retain the original and report the limitation.
 
 ## Verification
-Run `scripts/validate-role-setup.py` (roles as args, default = this user's five) to check every
-role profile has a well-formed SKILL.md (delimiters, non-empty body, YAML name+description). Confirm
-model routing with `hermes profile list` and per-role enablement with
-`hermes -p <role> skills list | grep enabled`. For a live pipeline, also verify the four supervision
-signals above and run the sentinel's deterministic tests, including dead-worker, provider-fatal, and
-blocked-card cases.
 
-## Pitfalls
-- Malformed skill frontmatter on a role skill stalls the queue at spawn (loader errors on the card's
-  first worker). Validate each new SKILL.md: starts `---`, YAML parses with `name`+`description`,
-  closes `\n---`, non-empty body (script: `scripts/validate-role-setup.py`).
-- `--clone` leaves every new profile on the DEFAULT model until you `config set` per profile; the
-  model column in `hermes profile list` is the route-verify point.
-- Bolting expensive-planner/cheap-executor to a pipeline means the expensive model re-runs on every
-  planner card attempt and retry round — budget per-attempt, not per-call.
-- QA/Integration review passes on the cheap executor model is a blind spot; per-card `-m/--provider`
-  override exists independent of the assignee profile, so a review card can run a stronger model
-  without changing the pipeline DAG.
-- Review-gate independence: to stop an actor grading its own work, give the reviewer a fresh card /
-  distinct profile; a reviewer card's context is built only from the work's handoff + diff (not the
-  reviewer's accumulated memory).
+Run `just test-agent-contracts` in this repository. The tests cover document consistency and validator
+behavior, not runtime readiness or whether a proposed behavioral change improves agents.
+
+For an exported layout `<role>/skills/**/SKILL.md`, run the declared recipe:
+`just validate-role-snapshot /absolute/export/root`. It requires PyYAML and checks exact role names,
+non-empty metadata/body, duplicates of required skills and role dependencies. It does not verify skill
+activation, model availability or current deployed content. Other layouts need a separately verified
+adapter; no live runtime is assumed or modified.
+
+The historical Hermes-specific adapter remains in `../onboard-hermes/SKILL.md`. Load it only if Hermes
+is explicitly selected; its old infrastructure assumptions are not portable requirements.

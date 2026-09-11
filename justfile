@@ -117,3 +117,11 @@ migrate-skills:
       IFS=$'\t' read -r source_name target_parent <<< "$mapping"
       just migrate-skill "$source_name" "$target_parent"
     done <<< "$mapper_output"
+
+# Check portable agent contracts and workflow documentation without changing files.
+test-agent-contracts:
+    PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_agent*.py'
+
+# Validate an explicit exported <role>/skills directory; requires PyYAML, no active runtime.
+validate-role-snapshot profiles_root:
+    python3 skills/dev-agents/kanban-agent-pipelines/scripts/validate-role-setup.py --profiles-root '{{ profiles_root }}'
