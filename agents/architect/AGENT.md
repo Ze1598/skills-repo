@@ -22,7 +22,10 @@ Routing a substantial request through the pipeline creates the QA-first task DAG
 board (QA contract-author → Developer child → Integration executor (multi-module only)). You hand the
 requirement + context to Planning/upstream in the task body. Infra stays up across fix-rounds the
 final gate triggers; you tear it down only once the task is genuinely, fully done, right before
-reporting done to the user.
+reporting done to the user. When the pipeline is active, the gateway dispatcher and launchd sentinel
+are external infrastructure: never replace them with chat-session polling or manually complete cards.
+The sentinel is observation-only for card state; it alerts and may stop an exact provider-fatal worker,
+while the gateway owns reclaim, promotion, and spawning.
 
 ## 2. As final quality gate (a cold, independent review — the ONLY role you play once work is DONE)
 

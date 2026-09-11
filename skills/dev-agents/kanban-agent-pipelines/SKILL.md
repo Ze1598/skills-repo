@@ -24,6 +24,12 @@ into a GLOBAL role skill — it misfires in unrelated projects. Global roles say
 project's declared command layer / conventions"; per-repo rules load from the project context file at
 project start.
 
+## Role roster
+
+The standard pipeline includes Architect, Judge, Planning, QA, Developer, Integration, and
+Read-and-Summarize. Judge is a separate `judge` profile using `openai/gpt-5.6-luna-pro`; it handles
+independent failure/review rulings and does not replace the Architect's final gate.
+
 ## When to Use
 - Standing up named agent roles for a new project (or porting Claude-Code subagents into Hermes).
 - Routing a substantial task through a QA-first Developer/QA/Integration pipeline.
@@ -83,11 +89,29 @@ project start.
   declared via `kanban_complete(artifacts=)`). Never design concurrent multi-worker writes to one
   shared tree to reconcile later — the system atomically claims one task at a time; serialize.
 
+## Durable supervision and handoff
+The gateway's embedded dispatcher is the sole owner of promotion, claiming, reclaim, spawning, and
+failure-limit auto-blocking. A separate launchd-carried sentinel is observation-only: it reads each
+running card's log and exact worker process, alerts on dead workers/provider-fatal output/blocked cards,
+and may stop the exact provider-fatal worker. It must never dispatch, reclaim, complete, or mutate card
+state. Do not substitute chat-session polling for either service.
+
+Before reporting a live pipeline, verify all four independent signals: launchd state for the sentinel,
+launchd state for the gateway, a worker PID matching a running card, and a gateway dispatcher log entry.
+A running card without a matching worker is stale, not progress. If the chat is interrupted, the
+external services remain the source of truth and must be read back after reconnection.
+
+The board is durable SQLite, not the mirror file. For board `kurothos-deckbuilder`, the canonical
+store is `~/.hermes/kanban/boards/kurothos-deckbuilder/kanban.db`; adjacent `board.json` contains
+board metadata. `~/.hermes/kanban/mirror-*.json` is only a projection.
+
 ## Verification
 Run `scripts/validate-role-setup.py` (roles as args, default = this user's five) to check every
 role profile has a well-formed SKILL.md (delimiters, non-empty body, YAML name+description). Confirm
 model routing with `hermes profile list` and per-role enablement with
-`hermes -p <role> skills list | grep enabled`.
+`hermes -p <role> skills list | grep enabled`. For a live pipeline, also verify the four supervision
+signals above and run the sentinel's deterministic tests, including dead-worker, provider-fatal, and
+blocked-card cases.
 
 ## Pitfalls
 - Malformed skill frontmatter on a role skill stalls the queue at spawn (loader errors on the card's

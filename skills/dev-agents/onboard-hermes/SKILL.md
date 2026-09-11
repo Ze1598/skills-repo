@@ -21,6 +21,7 @@ dispatcher + parent-link engine enforce order across restarts.
 | Role | Profile | Model | Does |
 |---|---|---|---|
 | Architect | (main chat session — `architect` gate skill) | openai/gpt-6-astra-flex | Talks to user, judges pipeline-vs-direct, owns README + ALL infra lifecycle, cold final-gate review |
+| Judge | `judge` | openai/gpt-5.6-luna-pro | Independently rules on failures, disputed handoffs, review loops, and recurring root causes |
 | Planning | `planning` | openai/gpt-6-astra-flex | Tech-lead: breaks requirement into task DAG, creates cards, applies doc edits |
 | QA | `qa` | qwen/qwen3.8-flash | CONTRACT AUTHOR: .feature + programmatic tests + mock datasets, authored first, before any code |
 | Developer | `developer` | qwen/qwen3.8-flash | Implements from requirement (never from QA's tests) + own unit tests |
