@@ -1,0 +1,14 @@
+interface:
+  display_name: Character Showcase Sheet
+  short_description: Create polished original-character showcase sheets
+  default_prompt: Use $create-character-showcase-sheet to turn my character references
+    and introduction into a 4:5 showcase sheet.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

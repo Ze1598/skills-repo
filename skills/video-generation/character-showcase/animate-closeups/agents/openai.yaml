@@ -1,0 +1,4 @@
+interface:
+  display_name: "Animate Closeups"
+  short_description: "Animate character details with a final face reveal"
+  default_prompt: "Use $animate-closeups to animate this reference character as a 15-second detail montage."

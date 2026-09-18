@@ -63,7 +63,7 @@ Run `just add-skill <path>` to copy `templates/skill/` under `skills/<path>`. Fo
 
 ## Migrating standalone prompts
 
-Add a markdown for each prompt you want to migrate in `migrate_prompts`. The [Skill mapper](migrate_prompts/mapper.yaml) file must be update with the mapping of skill file name (i.e. the markdown file name) to the location where you want to store the skill. 
+Add a markdown for each prompt you want to migrate in `migrate_prompts`. The [Skill mapper](migrate_prompts/mapper.yaml) file must be updated with the mapping of skill file name (i.e. the markdown file name) to the location where you want to store the skill. 
 
 Note the target location is a relative path to the /skills folder.
 

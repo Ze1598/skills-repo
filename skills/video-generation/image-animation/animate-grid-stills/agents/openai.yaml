@@ -1,0 +1,4 @@
+interface:
+  display_name: "Animate Grid Stills"
+  short_description: "Animate nine grid panels as consecutive shots"
+  default_prompt: "Use $animate-grid-stills to turn this 3×3 character grid into a short video."

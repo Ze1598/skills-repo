@@ -52,6 +52,18 @@ Reuse recognizable shapes from the frame when useful: circles for people, diamon
 
 Do not turn the frame into an animated-slide screenshot. The thumbnail must communicate one idea in less than a second.
 
+## Design for instant recognition
+
+The right-side visual is a hook, not an explanation. It must trigger recognition before the viewer reads the title. The video can carry the reasoning and nuance.
+
+- Start with a familiar physical action, consequence, or universal symbol.
+- Prefer collisions, barriers, breakage, displacement, repetition, isolation, visible waste, and other situations people recognize without analysis.
+- Use abstract nodes, flows, or before-and-after diagrams only when their meaning is obvious without labels or reconstruction.
+- Reject concepts that require the viewer to infer what shapes represent, compare network structures, follow several arrows, or decode a visual analogy.
+- Do not choose a diagram because it represents the logic accurately if a concrete action communicates the same conflict faster.
+
+Apply a one-second test before generation: imagine the title hidden and the thumbnail reduced to feed size. If a viewer could not identify the action, conflict, or consequence at a glance, redesign the visual.
+
 ## Build the title
 
 Preserve the exact wording of the user's title. Render it in uppercase and divide it into two to four compact lines.
@@ -89,6 +101,7 @@ Before returning it, verify:
 - the title dominates at small size;
 - one meaningful word or phrase is amber;
 - the right-hand diagram expresses the episode mechanism;
+- the right-hand visual passes the one-second test without relying on the title;
 - no tiny explanatory text survived from the frame;
 - the output matches the charcoal, cream, and amber series identity;
 - there are no logos, faces, stock imagery, extra copy, or watermark.

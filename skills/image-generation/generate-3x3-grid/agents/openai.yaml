@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate 3×3 Grid"
+  short_description: "Generate a grid of expressive selfie photos"
+  default_prompt: "Use $generate-3x3-grid to create a 3×3 grid of playful selfies."

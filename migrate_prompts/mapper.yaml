@@ -1,2 +1,3 @@
-- example-skill.md: capability-domain
-- another-skill.md: capability-domain/subdomain
+- animate-closeups.md: video-generation/character-showcase
+- animate-grid-stills.md: video-generation/image-animation
+- generate-3x3-grid.md: image-generation

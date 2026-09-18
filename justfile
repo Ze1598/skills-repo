@@ -122,6 +122,10 @@ migrate-skills:
 test-agent-contracts:
     PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_agent*.py'
 
+# Check that staged standalone prompts became complete skill packages.
+test-migrated-prompts:
+    PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_migrated_prompts.py'
+
 # Validate an explicit exported <role>/skills directory; requires PyYAML, no active runtime.
 validate-role-snapshot profiles_root:
     python3 skills/dev-agents/kanban-agent-pipelines/scripts/validate-role-setup.py --profiles-root '{{ profiles_root }}'
