@@ -1,0 +1,6 @@
+interface:
+  display_name: "generate_video_essay"
+  short_description: "Build a leadership visual essay video"
+  default_prompt: "Use $generate-video-essay to create a new video from the essay pasted below, and call the output video NameOfVideo.mp4."
+policy:
+  allow_implicit_invocation: true

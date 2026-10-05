@@ -1,0 +1,4 @@
+interface:
+  display_name: "Godot PS1 Art Direction"
+  short_description: "Create consistent PS1-inspired Godot visuals"
+  default_prompt: "Use $godot-ps1-art-direction to establish a coherent retro visual style with deliberate technical budgets."

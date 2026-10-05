@@ -1,0 +1,4 @@
+interface:
+  display_name: "Godot Foundations"
+  short_description: "Build reliable Godot scenes and gameplay"
+  default_prompt: "Use $godot-foundations to implement this gameplay change with clear scene ownership and targeted native verification."

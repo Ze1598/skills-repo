@@ -1,5 +1,21 @@
 set shell := ["bash", "-cu"]
 
+# Verify the approved personal skill snapshots and legacy video routing.
+test-personal-skills:
+    PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_personal_skill_imports.py'
+
+# Explicitly record a newly approved source snapshot before importing it.
+snapshot-personal-skills:
+    python3 scripts/import_personal_skills.py --record-snapshot
+
+# Replace only the seven approved packages from ~/.codex/skills.
+import-personal-skills:
+    python3 scripts/import_personal_skills.py
+
+# Run all deterministic repository tests.
+test:
+    PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests
+
 # Create a skill from templates/skill under skills/<path>.
 add-skill skill_path:
     #!/usr/bin/env bash

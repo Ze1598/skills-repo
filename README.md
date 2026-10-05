@@ -73,6 +73,35 @@ For additional clarifications, consult [Migration README](migrate_prompts/README
 
 ## Migrating skills
 
+### Personal Codex snapshots
+
+The seven personal packages in [the Codex snapshot manifest](migrate_skills/codex-personal-snapshot.json)
+were imported from the installed Codex skills as the user-designated source of truth:
+
+- `skills/writing/narrative-style/` replaces the previous package, including its UI metadata.
+- `skills/video-generation/` contains `generate-video-essay`, `generate-essay-audio`, and
+  `animate-recorded-audio`, kept together so their sibling links resolve.
+- `skills/game-development/godot/` contains `godot-foundations`, `godot-performance`, and
+  `godot-ps1-art-direction`, including their supporting assets.
+
+`skills/social-media-content/leadership-visual-essay/` now routes the old name to the imported
+video workflow. Its former production and narration instructions are superseded. The video
+skills require the consuming video project's SDK and `src/lib/essay-sdk/README.md`; that SDK
+is not bundled here. The imported instructions retain their original canonical-path guidance.
+Optional, system, and plugin skills are excluded from this import.
+
+`just test-personal-skills` checks exact package file hashes and executable flags against the
+committed snapshot, plus video skill routing. It needs no installed Codex skills. `just test`
+runs all repository tests. These checks establish package fidelity, not video or game quality.
+
+For a future explicitly approved refresh, run `just snapshot-personal-skills` to record the
+source hashes, then `just import-personal-skills` and `just test`. These commands read
+`~/.codex/skills`; importing replaces only the seven mapped repository directories, including
+removing files absent from the source. It refuses changed source packages until their snapshot
+is refreshed. Source packages are never modified.
+
+### Staged complete packages
+
 Place complete skill folders in `migrate_skills/` and map each folder name to its target parent path in [the complete-skill mapper](migrate_skills/mapper.yaml). The mapped value is relative to `skills/` and does not include the skill folder name.
 
 Run `just migrate-skills` to migrate every mapped package, or run `just migrate-skill <folder-name> <target-parent>` for one package. This workflow preserves the complete directory rather than creating a new template: `SKILL.md`, `agents/openai.yaml`, assets, references, scripts, binary files, and executable files move together. It validates the folder name against the skill frontmatter, refuses to overwrite existing targets, compares the copied package with its source, and removes the staged source only after verification succeeds.

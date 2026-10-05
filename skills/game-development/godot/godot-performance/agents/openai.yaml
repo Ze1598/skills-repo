@@ -1,0 +1,4 @@
+interface:
+  display_name: "Godot Performance"
+  short_description: "Diagnose and measure Godot performance improvements"
+  default_prompt: "Use $godot-performance to reproduce this slowdown, identify its bottleneck, and verify a measured improvement."
