@@ -143,5 +143,6 @@ referencing them does not itself authorize delegation.
 ## Instruction maintenance and boundaries
 
 - Keep this agreement limited to cross-cutting principles. Project paths, technologies, specific recipes, and domain requirements belong in project instructions and specialized skills.
+- Skill definitions must never directly reference previous results or local project files. If a skill needs reference material, explicitly copy that material into the skill's own `references/` directory and link to the bundled copy using a skill-relative path. Do not depend on prior-session context, external project paths, or symlinks to those files.
 - When updating instructions, integrate changes coherently and resolve duplication or contradictions. Do not merely append another rule for each correction.
 - Do not turn this file or skills into session logs or accumulating knowledge stores. A separate knowledge-management workflow, including any future Obsidian integration, requires its own agreement.
