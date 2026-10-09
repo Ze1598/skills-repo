@@ -5,6 +5,10 @@ project. They encode the workflow rules built together and held in agent memory.
 independent of the agent runtime in use. Per-project specifics (repo layout, module patterns, specific
 command layer) live in that project's own context file; these rules are the shared base.
 
+These are standing defaults. Explicit instructions for the current task can refine or override them.
+Project instructions and applicable skills supply more specific requirements. Higher-priority runtime
+instructions still apply.
+
 ## Communication style
 
 - Be short and direct. Match reply length to the weight of the request: a one-line question gets a one-line answer; completed work gets a brief report of what changed, what was verified, and what remains.
@@ -72,15 +76,6 @@ This section applies to software development and software-derived artifacts, inc
 - If a quality criterion cannot be established through available deterministic checks, report it as unverified and identify the manual check needed. Do not claim tests establish qualities they do not measure.
 - Keep verification relevant to the requirements and changes. Avoid redundant checks and procedural detours that add no evidence.
 
-
-### TDD-first (non-negotiable)
-
-- Write unit tests BEFORE starting any code/development change. Implement to make them pass.
-- Review/verification always re-runs these deterministic unit tests — never agentic reasoning,
-  never eyeballing the work as a substitute.
-- Update tests when user requirements change. A stale test is a lie.
-- Pair this with the project's `just` recipes for simplified command management (below).
-
 ### `just` recipes for command management
 
 - Projects leverage `just` recipes as the default command layer. Prefer the declared recipe over a
@@ -97,7 +92,7 @@ This section applies to software development and software-derived artifacts, inc
   already produces.
 - Never repeat agent work that a script can do.
 
-### Credentials and paid operations
+## Credentials and paid operations
 
 - Never read credential files or expose their contents, including through tool output or logs. Code may only load credentials at runtime without revealing them to the agent.
 - If integration details are missing, ask for the credential file location, variable names, or other non-secret details needed to reference them in code. Do not ask for secret values.
@@ -114,38 +109,36 @@ This section applies to software development and software-derived artifacts, inc
 
 ## Docs are the single source of truth
 
-- Ongoing changes AND new requirements must be reflected in project docs (roadmap/README/etc).
-- Docs update alongside code and tests — never stale. When requirements change, update the docs in
-  the same pass.
-
-## Evaluation rule: never judge your own work by inspecting it
-
-- Agents must NOT inspect code/assets to judge their own work (e.g. never vision-analyze a generated
-  image). Write unit tests, execute them, and read ONLY the test results — deterministic, cheap,
-  and it saves session context.
-- Pairs with "script once, loop compute" and TDD.
+- When changing project requirements or implementation, update the relevant project docs
+  (roadmap/README/etc.) alongside code and tests in the same pass.
+- Discussion or review alone does not authorize documentation edits.
 
 ## Knowledge handoff (cheap → expensive, citation-carrying)
 
-- Cheap agents summarize code/assets into bullet notes that ALWAYS carry `path:line` citations and
-  embed exact/sample data verbatim.
-- Expensive agents consume the summaries and only pull targeted depth at cited locations — never
-  blind scans.
-- Three trust tiers:
-  - (a) Verbatim data + citations = ground truth, trust as-is.
-  - (b) Cited claims = trusted, traceable cheaply.
-  - (c) Uncited claims = HYPOTHESES, explicitly flagged for the expensive agent to investigate —
-    not errors.
-- Citation is the contract that lets a downstream agent trust a claim without re-reading. Files are
-  the source of truth; prefer `path:line` over copying text.
-- The main session's context grows only by summary tokens when delegating.
+These rules apply when delegation is available and authorized. They do not require a swarm or
+prescribe model routing when the runtime has no such configuration.
+
+- Summarizing agents produce concise notes about code/assets with `path:line` citations and preserve
+  relevant exact/sample data verbatim.
+- Receiving agents use the summaries and retrieve targeted depth at cited locations instead of
+  repeating broad scans.
+- Distinguish evidence from interpretation:
+  - (a) Verbatim data with citations preserves the source evidence and its provenance.
+  - (b) Cited claims are traceable interpretations, not automatically correct conclusions.
+  - (c) Uncited claims are hypotheses requiring investigation, not established facts or errors.
+- Citations make verification targeted; they do not guarantee correctness. Verify consequential or
+  conflicting claims against the authoritative source, checking that the cited version is current.
+- Keep the main session's context focused on summaries, relevant evidence, and targeted follow-up
+  rather than raw delegated transcripts.
 
 ## Agent definitions
 
-The reusable agent role definitions (architect, planning, developer, qa, integration,
-read-and-summarize) live in `agents/<name>/AGENT.md` — the portable, vendor-neutral form of the role
-profiles. Their model routing and per-role contracts are defined there, not duplicated here. See the
-multi-agent pipeline workflow in `skills/dev-agents/`.
+When working in skills-repo, reusable agent role definitions (architect, planning, developer, qa,
+integration, read-and-summarize) are available in `agents/<name>/AGENT.md`, with the multi-agent
+pipeline workflow in `skills/dev-agents/`. These paths are relative to skills-repo, not arbitrary
+project roots. In other projects or runtimes, use these resources only when their locations are
+provided and accessible. Model routing and per-role contracts belong in those definitions, not here;
+referencing them does not itself authorize delegation.
 
 ## Instruction maintenance and boundaries
 
