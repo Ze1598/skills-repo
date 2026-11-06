@@ -25,7 +25,8 @@ problem.
 Use these bundled assets when preparing delivery directions and pause cues:
 
 - [Storytelling audio](assets/storytelling.mp3): a complete narration demonstrating
-  warm, measured delivery, clear explanation and a reflective close. Play it when
+  warm, measured delivery and clear explanation. Its softened closing delivery
+  is historical, not the target for new calls to action. Play it when
   a listening comparison is useful; do not infer a listening verdict from text.
 - [Exact generation request](assets/storytelling-request.json): the original
   request record, including the complete tagged speech string in `body.text`,
@@ -37,7 +38,9 @@ timing defaults below unless an override is requested. The example's
 story is reference content, not material to copy into unrelated narration. Use
 configured voice credentials for new calls; the recorded voice identifies the
 sample rather than imposing a voice on other projects. Reuse these files for
-reference without generating another paid sample.
+reference without generating another paid sample. Preserve the exact historical
+request; its `[Softening, reflective]` closing cue is superseded by the conversational, curious
+closing direction below and must not be copied into new requests.
 
 ## Reusable generation defaults
 
@@ -80,7 +83,10 @@ Use `eleven_v4` explicitly and one API request for the complete essay. Visual
 beats are authored scene boundaries, not separate synthesis requests. Preserve
 the exact approved spoken words and scene order. Keep continuous explanatory
 thoughts intact; add delivery guidance around the words instead of changing
-their meaning. Preview the assembled full request before generation.
+their meaning. Preview the assembled full request before generation, including
+the actual `body.text`: verify that the closing delivery tag appears immediately
+before the final CTA sentence and that no conflicting softening or emphatic
+closing cue remains.
 
 Keep the actual code/configuration that produces the request in
 `src/<VideoName>/audio.ts`, beside that video's script, plan and composition.
@@ -90,14 +96,38 @@ the shared helper. Importing a video request module must be free of paid side
 effects. Retain the exact request record with its generated source, excluding
 credentials. A generic CLI invocation alone is not sufficient provenance.
 
-## Direct engaging, restrained storytelling
+## Direct conversational, engaging storytelling
 
-The target is a warm conversational narrator: curious where a question opens
-the story, clear through the explanation, reflective at the close. Keep energy restrained while preserving natural expression and interest.
-Use sparse, explicit auditory tags such as `[Warm, conversational voice,
-measured delivery]`, `[Calm, clear storytelling voice]` and `[Softening, reflective]`.
-The bundled request demonstrates these directions in context. Use manual
-listening review when requested or when delivery changes materially. Avoid unrequested laughter, sighs, whispering, sound effects, shouting,
+The target is an engaging conversational narrator: warm and curious where a
+question opens the story, clear through the explanation, and inquisitive and
+lightly encouraging at the close. Use sparse, explicit auditory tags such as
+`[Warm, conversational voice, measured delivery]` and
+`[Calm, clear storytelling voice]` for the body of the essay.
+
+For the final call to action, set the segment's `direction` to
+`"Conversational, curious, lightly encouraging"`. The request builder must place
+`[Conversational, curious, lightly encouraging]` immediately before the closing
+spoken sentence. Invite the listener to consider a useful action. Carry the
+body's ordinary speaking volume and conversational pace into the CTA, with
+interest in the question and an encouraging inflection. Do not increase
+projection or intensity to signal the ending.
+
+Use the [CTA tone sample](references/cta-tone.mp3) as the listening target and
+its [exact request](references/cta-tone-request.json) to see the delivery cue in
+context. The sentence is reference content, not wording to copy into another
+essay. Reuse this sample without another paid reference call.
+
+Do not use `Confident, direct, engaging delivery` or `Softening, reflective` as
+CTA directions. Avoid emphatic, forceful, intimate, breathy or whispered
+closing directions and ellipses that draw out the ending. Keep these exclusions
+in authoring guidance; send the short positive delivery tag to the API, not a
+list of unwanted emotions. Preserve the approved words and existing pause
+budget. When exploring a different CTA tone, test only a short CTA under the
+user's paid-call authorization and obtain listening feedback before applying
+that untested direction to a full batch.
+
+Use manual listening review when requested or when delivery changes materially.
+Avoid unrequested laughter, sighs, whispering, sound effects, shouting,
 exclamation-heavy phrasing and capitalization that increases emphasis.
 
 Use natural sentence punctuation, paragraph boundaries and pause cues in the
@@ -109,7 +139,7 @@ when changing the tag vocabulary. Do not assume tags guarantee durations.
 Use 92 BPM as the user's **phrasing rhythm** reference, about 652 ms per beat.
 It does not mean 92 words per minute, and `speed: 0.92` does not implement it.
 Judge natural thought pacing by listening rather than asserting a BPM result
-from API settings. Use the reusable voice settings below and record requested overrides explicitly.
+from API settings. Use the reusable voice settings above and record requested overrides explicitly.
 
 ## Plan every pause before generation
 
@@ -151,7 +181,10 @@ Returned alignment can contain audio tags. Keep raw alignment for provenance;
 the shared preparation helper maps only spoken words to scenes and captions,
 failing on mismatches instead of guessing. Removing tag tokens from caption
 data does not prove they were inaudible. Have the user listen for spoken tags,
-unwanted sounds, voice fidelity, engagement and restrained energy.
+unwanted sounds, voice fidelity and engagement. For the CTA, check that the
+voice stays conversational, curious and lightly encouraging through the final
+word, without a sudden increase in loudness or intensity, or a drop into a
+breathy, intimate or drawn-out delivery.
 
 Treat tone evaluation as a manual listening case, as documented in
 `tests/README.md` and `scripts/preview-storytelling-tone.ts`. Present saved audio

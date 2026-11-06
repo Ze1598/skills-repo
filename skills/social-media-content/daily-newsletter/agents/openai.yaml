@@ -1,0 +1,15 @@
+interface:
+  display_name: daily newsletter
+  short_description: Write American English essays in your voice
+  default_prompt: 'Use $daily-newsletter to turn my operational takeaway and anti-pattern
+    into an essay in my voice: plan internally, show the behavior and consequence
+    in at most two opening paragraphs, explain the general pattern, and give the correction.'
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

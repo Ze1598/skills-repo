@@ -1,0 +1,50 @@
+{
+  "createdAt": "2026-10-12T18:22:21.180Z",
+  "method": "POST",
+  "url": "https://api.elevenlabs.io/v1/text-to-speech/QmMeKYANmozqFOHSuY8V/with-timestamps",
+  "body": {
+    "text": "[Conversational, curious, lightly encouraging] Before calling the issue closed, explain what will be different next time. [pause for 0.75 seconds]",
+    "model_id": "eleven_v4",
+    "voice_settings": {
+      "stability": 0.35,
+      "similarity_boost": 0.75,
+      "style": 0.45,
+      "speed": 0.92
+    }
+  },
+  "narration": {
+    "modelId": "eleven_v4",
+    "voiceSettings": {
+      "stability": 0.35,
+      "similarity_boost": 0.75,
+      "style": 0.45,
+      "speed": 0.92
+    },
+    "pausePlan": {
+      "internalSentenceMs": 250,
+      "laterSceneLeadMs": 500,
+      "sceneHoldMs": 750,
+      "finalHoldMs": 750,
+      "phrasingBpm": 92
+    },
+    "segments": [
+      {
+        "id": "close",
+        "sentences": [
+          "Before calling the issue closed, explain what will be different next time."
+        ],
+        "direction": "Conversational, curious, lightly encouraging"
+      }
+    ]
+  },
+  "pauseBudget": {
+    "internalSentenceMs": 250,
+    "laterSceneLeadMs": 500,
+    "sceneHoldMs": 750,
+    "finalHoldMs": 750,
+    "phrasingBpm": 92,
+    "betweenScenesMs": 1250,
+    "playbackPaddingMs": 0
+  },
+  "status": "completed"
+}

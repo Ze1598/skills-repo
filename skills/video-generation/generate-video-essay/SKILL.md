@@ -7,7 +7,7 @@ description: Adapt an input essay into a leadership video script and production 
 
 ## Responsibility and deliverables
 
-This skill explains how to adapt an essay into a leadership video essay. Its output is the narration script plus a production plan expressed as code using the SDK. The SDK supplies executable video behavior. SDK documentation teaches the LLM how to assemble that code.
+This skill explains how to adapt an essay into a leadership video essay. Its output is the narration script plus a production plan expressed as code using the SDK, followed by SEO problem timestamps for the finished video. The SDK supplies executable video behavior. SDK documentation teaches the LLM how to assemble that code.
 
 The canonical skill is `.agents/skills/generate-video-essay/SKILL.md`. Keep any installed personal copy synchronized byte-for-byte. Use vendor-agnostic `.agents` skills rather than `.claude` skills.
 
@@ -19,12 +19,15 @@ For a podcast, interview or other fixed recording supplied as the source, use
 [`animate-recorded-audio`](../animate-recorded-audio/SKILL.md). That workflow
 preserves the recording and binds explanatory visuals to its timestamps; reuse
 this skill's visual explanation rules without applying its script adaptation,
-speech-generation or pause-planning steps. For prose essays, continue below.
+speech-generation or pause-planning steps. Finish with the shared
+[SEO problem timestamps](#prepare-seo-problem-timestamps) step below for either input type.
+For prose essays, continue below.
 
 ## Production sequence
 
 Plan → prepare the full speech string with tone and pause tags → generate one
-complete audio file → write SDK video code from returned scene timing → render.
+complete audio file → write SDK video code from returned scene timing → render
+→ verify → prepare SEO problem timestamps.
 Concentrate reasoning on the plan. Execute subsequent steps with shared helpers
 and SDK usage code. The generated audio drives the video timeline. Use the audio subskill's
 [bundled narration and request](../generate-essay-audio/SKILL.md#workflow-and-bundled-reference)
@@ -84,3 +87,24 @@ Check the SDK documentation's implementation-status section. If a required capab
 Obtain approval before paid narration generation. Preserve existing authorization for ordinary implementation and verification. Follow the SDK docs for audio preparation, production commands, tests and artifact validation. Preserve requested filenames and overwrite only when authorized.
 
 The script and production code must express the same explanation. Report any remaining SDK gap explicitly rather than describe the intended result as already implemented.
+
+## Prepare SEO problem timestamps
+
+As the final delivery step, provide copy-ready text for the video's Problems field.
+Optimize the questions for SEO and learner search intent, not the user's personal
+writing style. Use clear, natural search terms for the concrete problems the video
+actually explains; avoid keyword stuffing, vague chapter titles, and questions the
+video does not answer. Select distinct useful explanations without imposing a fixed
+number of entries or repeating the same question in different words.
+
+Derive each timestamp from the finished video's timed transcript and production
+timeline. Point to where the relevant explanation begins, rather than automatically
+using a chapter boundary or the first mention of a topic. Use the final processed
+audio's timing for recorded-audio videos, accounting for any video-level offset.
+Order entries chronologically and format timestamps as `M:SS` (`H:MM:SS` when needed).
+
+Return one plain-text code block with one `timestamp question` pair per line and
+no bullets, headings, or commentary inside it. Keep the entire field at or below
+800 characters, including spaces and line breaks, unless the user specifies a
+different limit. Count the characters and verify the timestamps against the final
+timeline before delivery. If timing changes in a revision, update these entries too.

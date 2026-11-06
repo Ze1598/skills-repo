@@ -1,4 +1,14 @@
 interface:
-  display_name: "Generate Character Full-Body Design"
-  short_description: "Extend character references into full-body designs"
-  default_prompt: "Use $generate-character-fullbody-design to extend this character reference into a complete full-body design."
+  display_name: Generate Fullbody Character
+  short_description: Extend character art into a faithful full-body reference
+  default_prompt: Use $generate-character-fullbody-design to extend this character image
+    into a full-body reference while preserving its art style.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

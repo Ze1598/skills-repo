@@ -1,17 +1,27 @@
 ---
 name: animate-recorded-audio
-description: Create explanatory videos from existing podcast, interview or discussion audio using the leadership essay SDK. Preserve the supplied recording and time diagrams to its ideas; use generate-video-essay when starting from an essay that needs new narration.
+description: Create explanatory videos from existing podcast, interview or discussion audio using the leadership essay SDK. Preserve the original, preprocess the audio, and time diagrams to the processed recording; use generate-video-essay when starting from an essay that needs new narration.
 ---
 
 # Animate recorded audio
 
 ## Scope and shared conventions
 
-Produce a finished video, a timestamped transcript, and a chapter/scene plan expressed as SDK production code. The recording determines the spoken content, order and timing. Do not rewrite, regenerate, trim, rearrange, time-stretch or pad the soundtrack unless the user requests that editing. Visual revisions reuse the same source audio.
+Produce a finished video, a timestamped transcript, and a chapter/scene plan expressed as SDK production code. The processed recording determines the spoken content, order and timing. After the preprocessing step below, do not rewrite, regenerate, trim, rearrange, time-stretch or pad the soundtrack unless the user requests further editing. Visual revisions reuse the same processed source audio.
 
 The canonical skill is `.agents/skills/animate-recorded-audio/SKILL.md`. Keep the installed personal copy synchronized byte-for-byte, including supporting files. Locate the video repository before using its relative paths; the personal skill directory is not the project root.
 
 Read the repository's `AGENTS.md`, `src/lib/essay-sdk/README.md` and its linked authoring, visual-pattern and verification guidance. Reuse the [visual explanation rules](../generate-video-essay/SKILL.md#plan-the-visual-explanation) from `generate-video-essay`; its script adaptation, speech-generation and pause-planning steps do not apply here. Keep rendering behavior in the SDK and video-specific choices in scene data. Use existing capabilities first and report useful SDK improvements separately. Honor constraints against SDK changes; do not work around them with bespoke drawing code.
+
+## Preprocess the audio first
+
+Before transcription or animation work, run this command from the video repository root:
+
+```sh
+npm run audio:preprocess -- "/absolute/path/input-audio.m4a"
+```
+
+Run the command directly with its fixed defaults; no per-file reasoning or configuration is needed. Use the resulting `<input-stem>_processed.m4a` beside the input as the audio for the video animation, transcription, alignment, and all scene timing. Preserve the original input. If the supplied audio is already the completed output of this preprocessing step, reuse it instead of processing it twice. Do not reuse timestamps from the unprocessed recording, because filler removal changes timing.
 
 ## Establish the recording and transcript
 
@@ -37,10 +47,13 @@ Resolve source cues explicitly and fail on missing or ambiguous matches. Convert
 
 Honor the requested format and established project defaults. For long recordings with restrained motion, consider a short 30 fps comparison before committing to a costly full render; do not automatically inherit hard-coded 60 fps timing from an example. Preview difficult transitions and dense diagrams at the final resolution first.
 
-Use a thin SDK composition and documented production commands. When the source codec is compatible with the delivery container, render visuals separately if needed and mux the original audio by stream copy. Verify audio packet/payload hashes before claiming exact audio preservation. If transcoding is necessary, preserve the source, avoid unnecessary processing, verify duration/synchronization and disclose that the delivered audio was re-encoded.
+Use a thin SDK composition and documented production commands. When the source codec is compatible with the delivery container, render visuals separately if needed and mux the processed production audio by stream copy. Verify audio packet/payload hashes before claiming exact audio preservation. If transcoding is necessary, preserve the source, avoid unnecessary processing, verify duration/synchronization and disclose that the delivered audio was re-encoded.
 
 ## Verify and deliver
 
 Follow the repository's requirements-first checks for the production code. Check full timeline coverage, source-bound cues, readable layout and important causal changes with deterministic geometry and actual rendered pixels. Cover each distinct scene and the before/after states where movement explains the argument. Playback review complements those tests: sample each chapter, scene transitions and flagged transcript passages to check semantic timing and listening flow. State what was actually reviewed; screenshots alone cannot verify speech synchronization.
 
 After export, verify streams, resolution, frame rate, duration, complete-file decoding and audio preservation. Deliver the requested filename with a playable video link, retain transcript/cue provenance and the production plan, and record any remaining uncertainty or SDK limitation. Keep improvement suggestions separate from changes made to produce the video.
+
+Finish with the shared [SEO problem timestamps](../generate-video-essay/SKILL.md#prepare-seo-problem-timestamps)
+step, using the delivered video's timeline.

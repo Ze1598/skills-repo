@@ -1,0 +1,4 @@
+interface:
+  display_name: "Japanese Doodle Style"
+  short_description: "Draw a reference character as a rough Japanese anime doodle"
+  default_prompt: "Use $japanese-doodle-style to turn this character reference into a square crayon doodle."

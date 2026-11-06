@@ -1,2 +1,5 @@
-- create-character-showcase-sheet: image-generation/character-design
-- narrative-style: writing
+# Completed migrations. Add new entries below.
+# - daily-newsletter: social-media-content
+# - generate-fullbody-character: image-generation/character-design/generate-character-fullbody-design
+#   This value records the replacement directory. The installed skill uses its existing name.
+# - lyrics-ghostwriter: music-generation

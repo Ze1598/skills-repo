@@ -1,0 +1,14 @@
+interface:
+  display_name: lyrics-ghostwriter
+  short_description: Write original lyrics and compact Suno music prompts
+  default_prompt: Use $lyrics-ghostwriter to write original song lyrics from my theme
+    and musical direction.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

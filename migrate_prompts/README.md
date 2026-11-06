@@ -138,15 +138,13 @@ Also verify:
 
 ## Migration summary
 
-The current mapper entries have been imported as:
+The current mapper entry has been imported as:
 
 | Source | Skill package |
 | --- | --- |
-| `animate-closeups.md` | `skills/video-generation/character-showcase/animate-closeups/` |
-| `animate-grid-stills.md` | `skills/video-generation/image-animation/animate-grid-stills/` |
-| `generate-3x3-grid.md` | `skills/image-generation/generate-3x3-grid/` |
+| `japanese-doodle-style.md` | `skills/image-generation/japanese-doodle-style/` |
 
-The staged Markdown files remain available for exact-body checks against their skill packages.
+The staged Markdown file remains available for an exact-body check against its skill package.
 
 The complete workflow is:
 
