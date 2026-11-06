@@ -45,3 +45,11 @@ out/
 .env
 .env.*
 !.env.example
+
+# Migration inputs and snapshots
+/migrate_prompts/*
+!/migrate_prompts/README.md
+!/migrate_prompts/mapper.yamls
+/migrate_skills/*
+!/migrate_skills/README.md
+!/migrate_skills/mapper.yaml
